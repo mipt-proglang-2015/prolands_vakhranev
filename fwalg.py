@@ -101,7 +101,7 @@ def floyd_warshall_from_xml_to_csv(xml_address, csv_address):
 
 def c_floyd_warshall_from_xml_to_csv(xml_address, csv_address):
     tree = ElementTree.parse(xml_address)
-    matr = fwalg.form_resistance_matrix(form_nodes_list(tree), form_edges_list(tree))
+    matr = fwalg_form_resistance_matrix(form_nodes_list(tree), form_edges_list(tree))
     write_matrix_into_csv(csv_address, matr)
 
 
