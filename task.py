@@ -1,8 +1,6 @@
 __author__ = 'Anton'
 
-import sys
 import time
-import xml
 from xml.etree import ElementTree
 import sys
 import fwalg
@@ -52,36 +50,6 @@ def form_edges_list(tree):
         edges_list.append([to_net, from_net, float(diod.attrib[CONST_REVERSE_RESISTANCE_ATR])])
     return edges_list
 
-
-def form_matrix_of_resistance(nodes, edges):
-    num_of_nodes = len(nodes)
-    matrix = []
-    for i in range(num_of_nodes):
-        matrix.append([float("+inf")] * num_of_nodes)
-        matrix[i][i] = 0
-
-    for edge in edges:
-        i = nodes.index(edge[0])
-        j = nodes.index(edge[1])
-        weight = edge[2]
-        if matrix[i][j] == 0:
-            matrix[i][j] = 0
-        else:
-            matrix[i][j] = 1 / (1 / matrix[i][j] + 1 / weight)
-
-    for k in range(num_of_nodes):
-        for i in range(num_of_nodes):
-            for j in range(num_of_nodes):
-                if matrix[i][j] == 0 or matrix[i][k] + matrix[k][j] == 0:
-                    matrix[i][j] = 0
-                elif 1 / matrix[i][j] + 1 / (matrix[i][k] + matrix[k][j]) == 0:
-                    matrix[i][j] = float("+inf")
-                else:
-                    matrix[i][j] = 1 / (1 / matrix[i][j] + 1 / (matrix[i][k] + matrix[k][j]))
-
-    return matrix
-
-
 def write_matrix_into_csv(file_address, matrix):
     num_of_elems = len(matrix)
     with open(file_address, "w") as file:
@@ -93,32 +61,24 @@ def write_matrix_into_csv(file_address, matrix):
                     file.write(str(round(matrix[i][j], 6)) + ",")
             file.write("\n")
 
-
-def floyd_warshall_from_xml_to_csv(xml_address, csv_address):
-    tree = ElementTree.parse(xml_address)
-    matr = form_matrix_of_resistance(form_nodes_list(tree), form_edges_list(tree))
-    write_matrix_into_csv(csv_address, matr)
-
 def c_floyd_warshall_from_xml_to_csv(xml_address, csv_address):
     tree = ElementTree.parse(xml_address)
-    matr = fwalg_form_resistance_matrix(form_nodes_list(tree), form_edges_list(tree))
+    matr = fwalg.form_resistance_matrix(form_nodes_list(tree), form_edges_list(tree))
     write_matrix_into_csv(csv_address, matr)
 
 
 def main(argv):
-    py_start_time = time.time()
-    floyd_warshall_from_xml_to_csv(argv[0], argv[1])
-    py_end_time = time.time()
 
     c_start_time = time.time()
     c_floyd_warshall_from_xml_to_csv(argv[0], argv[1])
     c_end_time = time.time()
-    frac = (py_end_time - py_start_time)/(c_end_time - c_start_time)
-    print('python time divided by c++ time equals {0:.4f}'.format(frac))
+    frac = c_end_time - c_start_time
+    print('c++time equals {0:.4f}'.format(frac))
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
         main(sys.argv[1:])
     else:
+        #main(['input_test.xml', 'out.csv'])
         print("Error of using the program\n", "usage: hw1.py <input_xml_file> <output_csv_file>")

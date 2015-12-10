@@ -6,7 +6,7 @@ extern "C" {
 #include <Python.h>
 }
 
-namespace fwalg {	
+namespace fwalg {
 	typedef std::vector<double>  Vec1D;
 	typedef std::vector<Vec1D>   Vec2D;
 
@@ -36,13 +36,13 @@ namespace fwalg {
         int numOfNodes = int(nodes.size());
         Vec2D matrix;
         double infin = std::numeric_limits<double>::infinity();
-        
+
         for(int i = 0; i < numOfNodes; i++)
         {
             matrix.push_back(Vec1D(numOfNodes, infin));
             matrix[i][i] = 0;
         }
-        
+
         for(int k = 0; k < edges.size(); k++)
         {
             int i = binarySearch(int(edges[k][0]), nodes);
@@ -74,7 +74,7 @@ static fwalg::Vec1D pyobjectToC1D(PyObject* pyList)
 {
 	fwalg::Vec1D result;
 	result.resize(PyObject_Length(pyList));
-	for (int i = 0; i < result.size(); ++i) 
+	for (int i = 0; i < result.size(); ++i)
     {
 		PyObject* pyElem = PyList_GetItem(pyList, i);
         const double elem = PyFloat_AsDouble(pyElem);
@@ -87,12 +87,12 @@ static fwalg::Vec2D pyobjectToC2D(PyObject* pyMatrix)
 {
 	fwalg::Vec2D result;
 	result.resize(PyObject_Length(pyMatrix));
-	for (int i = 0; i < result.size(); ++i) 
+	for (int i = 0; i < result.size(); ++i)
     {
 		PyObject* pyRow = PyList_GetItem(pyMatrix, i);
 		fwalg::Vec1D& row = result[i];
 		row.resize(PyObject_Length(pyRow));
-		for (int j = 0; j < row.size(); ++j) 
+		for (int j = 0; j < row.size(); ++j)
         {
 			PyObject* pyElem = PyList_GetItem(pyRow, j);
 			const double elem = PyFloat_AsDouble(pyElem);
@@ -105,12 +105,12 @@ static fwalg::Vec2D pyobjectToC2D(PyObject* pyMatrix)
 static PyObject* cToPyobject2D(const fwalg::Vec2D& matrix)
 {
 	PyObject * result = PyList_New(matrix.size());
-	for (int i = 0; i < matrix.size(); ++i) 
+	for (int i = 0; i < matrix.size(); ++i)
     {
 		const fwalg::Vec1D & row = matrix[i];
 		PyObject * pyRow = PyList_New(row.size());
 		PyList_SetItem(result, i, pyRow);
-		for (int j = 0; j < row.size(); ++j) 
+		for (int j = 0; j < row.size(); ++j)
         {
 			const double elem = row[j];
 			PyObject * pyElem = PyFloat_FromDouble(elem);
@@ -120,7 +120,7 @@ static PyObject* cToPyobject2D(const fwalg::Vec2D& matrix)
 	return result;
 }
 
-static PyObject * fwalg_form_resistance_matrix(PyObject * module, PyObject * args)
+static PyObject * form_resistance_matrix(PyObject * module, PyObject * args)
 {
 	PyObject* pyNodes = PyTuple_GetItem(args, 0);
 	PyObject* pyEdges = PyTuple_GetItem(args, 1);
@@ -137,14 +137,14 @@ static PyObject * fwalg_form_resistance_matrix(PyObject * module, PyObject * arg
 PyMODINIT_FUNC PyInit_fwalg()
 {
 	static PyMethodDef ModuleMethods[] = {
-		{ "form_resistance_matrix", fwalg_form_resistance_matrix, METH_VARARGS, "F-W algorithm" },
+		{ "form_resistance_matrix", form_resistance_matrix, METH_VARARGS, "F-W algorithm" },
 		{ NULL, NULL, 0, NULL }
 	};
 	static PyModuleDef ModuleDef = {
 		PyModuleDef_HEAD_INIT,
 		"fwalg",
 		"Floyd Warshall algorithm",
-		-1, ModuleMethods, 
+		-1, ModuleMethods,
 		NULL, NULL, NULL, NULL
 	};
 	PyObject * module = PyModule_Create(&ModuleDef);
