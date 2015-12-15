@@ -25,6 +25,7 @@ def form_nodes_list(tree):
     nodes_list.sort()
     return nodes_list
 
+
 def form_edges_list(tree):
     resistors = tree.findall(CONST_RESISTOR_TAG)
     capactors = tree.findall(CONST_CAPATOR_TAG)

@@ -117,6 +117,7 @@ static PyObject* cToPyobject2D(const fwalg::Vec2D& matrix)
 			PyList_SetItem(pyRow, j, pyElem);
 		}
 	}
+
 	return result;
 }
 
